@@ -22,6 +22,19 @@ namespace VBDartGame
         public VBDartGame()
         {
             InitializeComponent();
+
+            // Form setup
+            this.Text = "Dart Game Simulator";
+            this.KeyPreview = true;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+
+            DrawPictureBox.BackColor = Color.White;
+            RoundListBox.Visible = false;
+
+            RoundLabel.Text = "Round: -";
+            ThrowLabel.Text = "Darts: 0 / 3";
+            ModeLabel.Text = "Mode: Play";
         }
 
         void Spirals()

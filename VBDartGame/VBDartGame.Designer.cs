@@ -34,7 +34,7 @@
             ExitButton = new Button();
             RoundListBox = new ListBox();
             RoundLabel = new Label();
-            ThrownLabel = new Label();
+            ThrowLabel = new Label();
             ModeLabel = new Label();
             DisplayGroupBox = new GroupBox();
             ((System.ComponentModel.ISupportInitialize)DrawPictureBox).BeginInit();
@@ -94,14 +94,14 @@
             RoundLabel.TabIndex = 5;
             RoundLabel.Text = "Round Label";
             // 
-            // ThrownLabel
+            // ThrowLabel
             // 
-            ThrownLabel.AutoSize = true;
-            ThrownLabel.Location = new Point(6, 60);
-            ThrownLabel.Name = "ThrownLabel";
-            ThrownLabel.Size = new Size(98, 20);
-            ThrownLabel.TabIndex = 6;
-            ThrownLabel.Text = "Thrown Label";
+            ThrowLabel.AutoSize = true;
+            ThrowLabel.Location = new Point(6, 60);
+            ThrowLabel.Name = "ThrowLabel";
+            ThrowLabel.Size = new Size(90, 20);
+            ThrowLabel.TabIndex = 6;
+            ThrowLabel.Text = "Throw Label";
             // 
             // ModeLabel
             // 
@@ -114,7 +114,7 @@
             // 
             // DisplayGroupBox
             // 
-            DisplayGroupBox.Controls.Add(ThrownLabel);
+            DisplayGroupBox.Controls.Add(ThrowLabel);
             DisplayGroupBox.Controls.Add(ModeLabel);
             DisplayGroupBox.Controls.Add(RoundLabel);
             DisplayGroupBox.Location = new Point(478, 12);
@@ -150,7 +150,7 @@
         private Button ExitButton;
         private ListBox RoundListBox;
         private Label RoundLabel;
-        private Label ThrownLabel;
+        private Label ThrowLabel;
         private Label ModeLabel;
         private GroupBox DisplayGroupBox;
     }
