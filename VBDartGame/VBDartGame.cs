@@ -4,7 +4,6 @@ namespace VBDartGame
     {
 
         // Variables Below Here ------------------------------------------------------------
-        Random randy = new Random();
         Point[] dartPositions = new Point[3];
         List<string> savedRounds = new List<string>();
 
@@ -35,26 +34,6 @@ namespace VBDartGame
             RoundLabel.Text = "Round: -";
             ThrowLabel.Text = "Darts: 0 / 3";
             ModeLabel.Text = "Mode: Play";
-        }
-
-        void Spirals()
-        {
-            Graphics g = DrawPictureBox.CreateGraphics();
-            Pen thePen = new Pen(Color.FromArgb(GetNumberFrom(255), GetNumberFrom(255), GetNumberFrom(255)), 3);
-
-            double x, y, oldX = 0, oldY = 0;
-
-            for (int i = 0; i < 360; i++)
-            {
-                x = 100 * Math.Cos(45 * (Math.PI / 180));
-                y = 100 * Math.Sin(45 * (Math.PI / 180));
-                g.DrawLine(thePen, (int)oldX, (int)oldY, (int)x, (int)y);
-                oldX = x;
-                oldY = y;
-
-            }
-            g.Dispose();
-            thePen.Dispose();
         }
 
         int GetNumberFrom(int max, int min = 0)
