@@ -7,6 +7,18 @@ namespace VBDartGame
             InitializeComponent();
         }
 
+        // Variables Below Here ------------------------------------------------------------
+        Random randy = new Random();
+        Point[] dartPositions = new Point[3];
+        List<string> savedRounds = new List<string>();
+
+        int roundNumber = 0;
+        int throwCount = 0;
+        bool reviewMode = false;
+        bool roundStarted = false;
+
+        ToolTip tips = new ToolTip();
+
         void Spirals()
         {
             Graphics g = DrawPictureBox.CreateGraphics();

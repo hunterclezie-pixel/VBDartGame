@@ -32,7 +32,13 @@
             StartRoundButton = new Button();
             ReviewButton = new Button();
             ExitButton = new Button();
+            RoundListBox = new ListBox();
+            RoundLabel = new Label();
+            ThrownLabel = new Label();
+            ModeLabel = new Label();
+            DisplayGroupBox = new GroupBox();
             ((System.ComponentModel.ISupportInitialize)DrawPictureBox).BeginInit();
+            DisplayGroupBox.SuspendLayout();
             SuspendLayout();
             // 
             // DrawPictureBox
@@ -69,13 +75,61 @@
             ExitButton.TabIndex = 3;
             ExitButton.Text = "Exit";
             ExitButton.UseVisualStyleBackColor = true;
-            ExitButton.Click += this.ExitButton_Click;
+            ExitButton.Click += ExitButton_Click;
+            // 
+            // RoundListBox
+            // 
+            RoundListBox.FormattingEnabled = true;
+            RoundListBox.Location = new Point(478, 160);
+            RoundListBox.Name = "RoundListBox";
+            RoundListBox.Size = new Size(310, 104);
+            RoundListBox.TabIndex = 4;
+            // 
+            // RoundLabel
+            // 
+            RoundLabel.AutoSize = true;
+            RoundLabel.Location = new Point(6, 23);
+            RoundLabel.Name = "RoundLabel";
+            RoundLabel.Size = new Size(92, 20);
+            RoundLabel.TabIndex = 5;
+            RoundLabel.Text = "Round Label";
+            // 
+            // ThrownLabel
+            // 
+            ThrownLabel.AutoSize = true;
+            ThrownLabel.Location = new Point(6, 60);
+            ThrownLabel.Name = "ThrownLabel";
+            ThrownLabel.Size = new Size(98, 20);
+            ThrownLabel.TabIndex = 6;
+            ThrownLabel.Text = "Thrown Label";
+            // 
+            // ModeLabel
+            // 
+            ModeLabel.AutoSize = true;
+            ModeLabel.Location = new Point(6, 93);
+            ModeLabel.Name = "ModeLabel";
+            ModeLabel.Size = new Size(88, 20);
+            ModeLabel.TabIndex = 7;
+            ModeLabel.Text = "Mode Label";
+            // 
+            // DisplayGroupBox
+            // 
+            DisplayGroupBox.Controls.Add(ThrownLabel);
+            DisplayGroupBox.Controls.Add(ModeLabel);
+            DisplayGroupBox.Controls.Add(RoundLabel);
+            DisplayGroupBox.Location = new Point(478, 12);
+            DisplayGroupBox.Name = "DisplayGroupBox";
+            DisplayGroupBox.Size = new Size(310, 142);
+            DisplayGroupBox.TabIndex = 8;
+            DisplayGroupBox.TabStop = false;
             // 
             // VBDartGame
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(DisplayGroupBox);
+            Controls.Add(RoundListBox);
             Controls.Add(ExitButton);
             Controls.Add(ReviewButton);
             Controls.Add(StartRoundButton);
@@ -83,6 +137,8 @@
             Name = "VBDartGame";
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)DrawPictureBox).EndInit();
+            DisplayGroupBox.ResumeLayout(false);
+            DisplayGroupBox.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -92,5 +148,10 @@
         private Button StartRoundButton;
         private Button ReviewButton;
         private Button ExitButton;
+        private ListBox RoundListBox;
+        private Label RoundLabel;
+        private Label ThrownLabel;
+        private Label ModeLabel;
+        private GroupBox DisplayGroupBox;
     }
 }
