@@ -55,14 +55,31 @@ namespace VBDartGame
         void DrawDart(int x, int y)
         {
             Graphics g = DrawPictureBox.CreateGraphics();
-            Pen thePen = new Pen(Color.Black, 3);
-            int size = 3;
+            Pen thePen = new Pen(Color.Black, 2);
+            int size = 10;
             g.DrawEllipse(thePen, x - size / 2, y - size / 2, size, size);
             g.DrawLine(thePen, x - 10, y, x + 10, y);
             g.DrawLine(thePen, x, y - 10, x, y + 10);
 
             g.Dispose();
             thePen.Dispose();
+        }
+
+        void ThrowDart()
+        {
+            if (throwCount < 3)
+            {
+                int x = GetNumberFrom(DrawPictureBox.Width);
+                int y = GetNumberFrom(DrawPictureBox.Height);
+                dartPositions[throwCount] = new Point(x, y);
+                DrawDart(x, y);
+                throwCount++;
+                ThrowLabel.Text = $"Darts: {throwCount} / 3";
+            }
+            else
+            {
+                MessageBox.Show("You have already thrown 3 darts. Start a new round.");
+            }
         }
 
         // Event handlers here ------------------------------------------------------------
