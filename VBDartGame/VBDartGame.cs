@@ -2,10 +2,6 @@ namespace VBDartGame
 {
     public partial class VBDartGame : Form
     {
-        public VBDartGame()
-        {
-            InitializeComponent();
-        }
 
         // Variables Below Here ------------------------------------------------------------
         Random randy = new Random();
@@ -18,6 +14,15 @@ namespace VBDartGame
         bool roundStarted = false;
 
         ToolTip tips = new ToolTip();
+
+        // Location of the log file
+        string logFile = Path.GetFullPath(Path.Combine(
+            Application.StartupPath, "..", "..", "..", "DartGame.log"));
+
+        public VBDartGame()
+        {
+            InitializeComponent();
+        }
 
         void Spirals()
         {
