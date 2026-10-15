@@ -1,11 +1,10 @@
-using Microsoft.VisualBasic.ApplicationServices;
-
 namespace VBDartGame
 {
     public partial class VBDartGame : Form
     {
 
         // Variables Below Here ------------------------------------------------------------
+        Random randy = new Random();
         Point[] dartPositions = new Point[3];
         List<string> savedRounds = new List<string>();
 
@@ -36,11 +35,30 @@ namespace VBDartGame
             RoundLabel.Text = "Round: -";
             ThrowLabel.Text = "Darts: 0 / 3";
             ModeLabel.Text = "Mode: Play";
+
+            // Button text and access keys
+            StartRoundButton.Text = "&Start Round";
+            ReviewButton.Text = "&Review Rounds";
+            ExitButton.Text = "&Quit";
+
+            // Tab order
+            StartRoundButton.TabIndex = 0;
+            ReviewButton.TabIndex = 1;
+            RoundListBox.TabIndex = 2;
+            ExitButton.TabIndex = 3;
+
+            DrawPictureBox.TabStop = false;
+
+            // Tooltips
+            tips.SetToolTip(StartRoundButton, "Start a new round.");
+            tips.SetToolTip(ReviewButton, "Review previous rounds.");
+            tips.SetToolTip(ExitButton, "Close the game.");
+            tips.SetToolTip(DrawPictureBox, "Press Spacebar to throw a dart.");
+            tips.SetToolTip(RoundListBox, "Select a saved round.");
         }
 
         int GetNumberFrom(int max, int min = 0)
         {
-            Random randy = new Random();
             return randy.Next(min, max + 1);
         }
 
