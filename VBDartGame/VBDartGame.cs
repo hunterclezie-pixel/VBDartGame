@@ -163,20 +163,18 @@ namespace VBDartGame
         {
             DrawBoard(e.Graphics);
 
+            if (DrawPictureBox.ClientSize.Width <= 20 || DrawPictureBox.ClientSize.Height <= 20)
+            {
+                return;
+            }
+
             for (int i = 0; i < throwCount; i++)
             {
                 int x = dartPositions[i].X;
                 int y = dartPositions[i].Y;
-
-                // Keep the drawing inside the PictureBox
-                if (DrawPictureBox.ClientSize.Width > 20 &&
-                    DrawPictureBox.ClientSize.Height > 20)
-                {
-                    x = Math.Max(10, Math.Min(x, DrawPictureBox.ClientSize.Width - 11));
-                    y = Math.Max(10, Math.Min(y, DrawPictureBox.ClientSize.Height - 11));
-
-                    DrawDart(e.Graphics, x, y);
-                }
+                x = Math.Max(10, Math.Min(x, DrawPictureBox.Width - 10));
+                y = Math.Max(10, Math.Min(y, DrawPictureBox.Height - 10));
+                DrawDart(e.Graphics, x, y);
             }
         }
 
