@@ -42,16 +42,6 @@ namespace VBDartGame
             return randy.Next(min, max + 1);
         }
 
-        void DrawLine(int x, int y)
-        {
-            Graphics g = DrawPictureBox.CreateGraphics();
-            Pen thePen = new Pen(Color.FromArgb(GetNumberFrom(255), GetNumberFrom(255), GetNumberFrom(255)), 3);
-            g.DrawLine(thePen, 0, 0, x, y);
-
-            g.Dispose();
-            thePen.Dispose();
-        }
-
         void DrawDart(int x, int y)
         {
             Graphics g = DrawPictureBox.CreateGraphics();
@@ -88,6 +78,58 @@ namespace VBDartGame
             {
                 MessageBox.Show("You have thrown 3 darts. Start a new round.");
                 SaveRound();
+            }
+        }
+
+        void LoadRounds()
+        {
+            savedRounds.Clear();
+            RoundListBox.Items.Clear();
+
+            try
+            { 
+                if (File.Exists(logFile))
+                {
+                    File.WriteAllText(logFile, "");
+                }
+
+                string[] lines = File.ReadAllLines(logFile);
+                List<int> roundNumbers = new List<int>();
+
+                foreach (string line in lines)
+                {
+                    string[] parts = line.Split(',');
+
+                    if (parts.Length != 7)
+                    {
+                        continue;
+                    }
+
+                    int[] numbers = new int[7];
+                    bool valid = true;
+
+                    for (int i = 0; i < 7; i++)
+                    {
+                        if (!int.TryParse(parts[i], out numbers[i]) || numbers[i] < 0)
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+
+                    if (!valid || numbers[0] == 0 || roundNumbers.Contains(numbers[0]))
+                    {
+                        continue;
+                    }
+
+                    roundNumbers.Add(numbers[0]);
+                    savedRounds.Add(line);
+                    RoundListBox.Items.Add($"Round {numbers[0]}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading rounds: " + ex.Message);
             }
         }
 
