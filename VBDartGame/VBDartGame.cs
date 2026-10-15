@@ -35,7 +35,7 @@ namespace VBDartGame
             ThrowLabel.Text = "Darts: 0 / 3";
             ModeLabel.Text = "Mode: Play";
 
-            // Event handlers
+            // Spacebar throws a dart, so prevent focused buttons from receiving Spacebar
             this.KeyDown += VBDartGame_KeyDown;
             DrawPictureBox.Paint += DrawPictureBox_Paint;
             RoundListBox.SelectedIndexChanged += RoundListBox_SelectedIndexChanged;
