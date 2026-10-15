@@ -142,7 +142,7 @@ namespace VBDartGame
 
             try
             {
-                if (File.Exists(logFile))
+                if (!File.Exists(logFile))
                 {
                     File.WriteAllText(logFile, "");
                 }
@@ -350,6 +350,35 @@ namespace VBDartGame
 
             RoundLabel.Text = "Round: -";
             ThrowLabel.Text = "Darts: 0 / 3";
+            DrawPictureBox.Invalidate();
+        }
+
+        private void RoundListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!reviewMode || RoundListBox.SelectedIndex < 0)
+            {
+                return;
+            }
+
+            string roundData = savedRounds[RoundListBox.SelectedIndex];
+            string[] parts = roundData.Split(',');
+
+            roundNumber = int.Parse(parts[0]);
+
+            for (int i = 0; i < 3; i++)
+            {
+                int x = int.Parse(parts[i * 2 + 1]);
+                int y = int.Parse(parts[i * 2 + 2]);
+
+                dartPositions[i] = new Point(x, y);
+            }
+
+            throwCount = 3;
+
+            RoundLabel.Text = $"Round: {roundNumber}";
+            ThrowLabel.Text = "Darts: 3 / 3";
+
+            DrawPictureBox.Invalidate();
         }
     }
 }
