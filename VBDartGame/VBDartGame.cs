@@ -140,24 +140,24 @@ namespace VBDartGame
             if (throwCount == 3)
             {
                 string roundData = $"{roundNumber}";
-            }
-            
-            for (int i = 0; i < 3; i++)
-            {
-                roundData += $",{dartPositions[i].X},{dartPositions[i].Y}";
-            }
 
-            try
-            {
-                File.AppendAllText(logFile, roundData + Environment.NewLine);
+                for (int i = 0; i < 3; i++)
+                {
+                    roundData += $",{dartPositions[i].X},{dartPositions[i].Y}";
+                }
 
-                roundStarted = false;
+                try
+                {
+                    File.AppendAllText(logFile, roundData + Environment.NewLine);
 
-                MessageBox.Show($"Round {roundNumber} saved.");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error saving round: " + ex.Message);
+                    roundStarted = false;
+
+                    MessageBox.Show($"Round {roundNumber} saved.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error saving round: " + ex.Message);
+                }
             }
         }
 
