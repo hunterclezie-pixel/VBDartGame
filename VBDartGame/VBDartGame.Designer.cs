@@ -57,6 +57,7 @@
             StartRoundButton.TabIndex = 1;
             StartRoundButton.Text = "Start Round";
             StartRoundButton.UseVisualStyleBackColor = true;
+            StartRoundButton.Click += StartRoundButton_Click;
             // 
             // ReviewButton
             // 
@@ -80,7 +81,7 @@
             // RoundListBox
             // 
             RoundListBox.FormattingEnabled = true;
-            RoundListBox.Location = new Point(478, 160);
+            RoundListBox.Location = new Point(478, 12);
             RoundListBox.Name = "RoundListBox";
             RoundListBox.Size = new Size(310, 104);
             RoundListBox.TabIndex = 4;
@@ -117,7 +118,7 @@
             DisplayGroupBox.Controls.Add(ThrowLabel);
             DisplayGroupBox.Controls.Add(ModeLabel);
             DisplayGroupBox.Controls.Add(RoundLabel);
-            DisplayGroupBox.Location = new Point(478, 12);
+            DisplayGroupBox.Location = new Point(478, 122);
             DisplayGroupBox.Name = "DisplayGroupBox";
             DisplayGroupBox.Size = new Size(310, 142);
             DisplayGroupBox.TabIndex = 8;

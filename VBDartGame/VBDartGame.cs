@@ -113,5 +113,29 @@ namespace VBDartGame
             DrawLine(x, y);
             DrawDart(x, y);
         }
+
+        private void StartRoundButton_Click(object sender, EventArgs e)
+        {
+            if (!roundStarted)
+            {
+                try
+                {
+                    roundNumber = GetNextRound();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error occurred while starting the round.");
+                    return;
+                }
+
+                throwCount = 0;
+                roundStarted = true;
+                reviewMode = false;
+
+                RoundLabel.Text = $"Round: {roundNumber}";
+                ThrowLabel.Text = $"Darts: {throwCount} / 3";
+                ModeLabel.Text = "Mode: Play";
+            }
+        }
     }
 }
