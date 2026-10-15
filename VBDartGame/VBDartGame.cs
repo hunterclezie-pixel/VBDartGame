@@ -77,7 +77,7 @@ namespace VBDartGame
         // Draws one dart: a circle with a center mark
         void DrawDart(Graphics g, int x, int y)
         {
-            Pen thePen = new Pen(Color.Yellow, 2);
+            Pen thePen = new Pen(Color.Green, 2);
             int size = 10;
 
             g.DrawEllipse(thePen, x - size / 2, y - size / 2, size, size);
@@ -138,10 +138,10 @@ namespace VBDartGame
             Color[] ringColors =
             {
                 Color.Black,
-                Color.Firebrick,
+                Color.DarkOrange,
                 Color.White,
-                Color.ForestGreen,
-                Color.Firebrick
+                Color.Black,
+                Color.DarkOrange
             };
 
             // Draw the biggest ring first, then smaller rings on top
