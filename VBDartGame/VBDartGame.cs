@@ -55,6 +55,8 @@ namespace VBDartGame
             tips.SetToolTip(ExitButton, "Close the game.");
             tips.SetToolTip(DrawPictureBox, "Press Spacebar to throw a dart.");
             tips.SetToolTip(RoundListBox, "Select a saved round.");
+
+            this.KeyDown += VBDartGame_KeyDown;
         }
 
         int GetNumberFrom(int max, int min = 0)
@@ -83,20 +85,32 @@ namespace VBDartGame
                 return;
             }
 
-
-            if (throwCount < 3)
-            {
-                int margin = 10;
-                int x = GetNumberFrom(DrawPictureBox.Width - margin - 1, margin);
-                int y = GetNumberFrom(DrawPictureBox.Height - margin - 1, margin);
-                dartPositions[throwCount] = new Point(x, y);
-                DrawDart(x, y);
-                throwCount++;
-                ThrowLabel.Text = $"Darts: {throwCount} / 3";
-            }
             if (throwCount == 3)
             {
                 MessageBox.Show("You have thrown 3 darts. Start a new round.");
+                SaveRound();
+            }
+
+            int margin = 10;
+
+            if (DrawPictureBox.ClientSize.Width <= margin * 2 ||
+                DrawPictureBox.ClientSize.Height <= margin * 2)
+            {
+                MessageBox.Show("PictureBox is too small.");
+                return;
+            }
+
+            int x = GetNumberFrom(DrawPictureBox.Width - margin - 1, margin);
+
+            int y = GetNumberFrom(DrawPictureBox.Height - margin - 1, margin);
+
+            dartPositions[throwCount] = new Point(x, y);
+            throwCount++;
+            ThrowLabel.Text = $"Darts: {throwCount} / 3";
+            DrawPictureBox.Invalidate();
+
+            if (throwCount == 3)
+            {
                 SaveRound();
             }
         }
