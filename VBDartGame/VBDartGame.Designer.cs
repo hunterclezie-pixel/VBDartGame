@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             DrawPictureBox = new PictureBox();
             StartRoundButton = new Button();
             ReviewButton = new Button();
@@ -37,6 +38,7 @@
             ThrowLabel = new Label();
             ModeLabel = new Label();
             DisplayGroupBox = new GroupBox();
+            ToolTip = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)DrawPictureBox).BeginInit();
             DisplayGroupBox.SuspendLayout();
             SuspendLayout();
@@ -48,6 +50,7 @@
             DrawPictureBox.Size = new Size(460, 426);
             DrawPictureBox.TabIndex = 0;
             DrawPictureBox.TabStop = false;
+            ToolTip.SetToolTip(DrawPictureBox, "Press the Spacebar to throw a dart");
             // 
             // StartRoundButton
             // 
@@ -55,6 +58,7 @@
             StartRoundButton.Name = "StartRoundButton";
             StartRoundButton.Size = new Size(310, 52);
             StartRoundButton.TabIndex = 1;
+            StartRoundButton.Tag = "Start a new round of three darts";
             StartRoundButton.Text = "Start Round";
             StartRoundButton.UseVisualStyleBackColor = true;
             StartRoundButton.Click += StartRoundButton_Click;
@@ -66,6 +70,7 @@
             ReviewButton.Size = new Size(310, 52);
             ReviewButton.TabIndex = 2;
             ReviewButton.Text = "Review Round";
+            ToolTip.SetToolTip(ReviewButton, "Switch between Play mode and Review mode");
             ReviewButton.UseVisualStyleBackColor = true;
             ReviewButton.Click += ReviewButton_Click;
             // 
@@ -76,6 +81,7 @@
             ExitButton.Size = new Size(310, 52);
             ExitButton.TabIndex = 3;
             ExitButton.Text = "Exit";
+            ToolTip.SetToolTip(ExitButton, "Quit the game");
             ExitButton.UseVisualStyleBackColor = true;
             ExitButton.Click += ExitButton_Click;
             // 
@@ -86,6 +92,7 @@
             RoundListBox.Name = "RoundListBox";
             RoundListBox.Size = new Size(310, 104);
             RoundListBox.TabIndex = 4;
+            ToolTip.SetToolTip(RoundListBox, "Select a past round to see its darts");
             // 
             // RoundLabel
             // 
@@ -155,5 +162,6 @@
         private Label ThrowLabel;
         private Label ModeLabel;
         private GroupBox DisplayGroupBox;
+        private ToolTip ToolTip;
     }
 }

@@ -24,46 +24,18 @@ namespace VBDartGame
         ToolTip tips = new ToolTip();
 
         // Location of the log file
-        string logFile = Path.GetFullPath(Path.Combine(
-            Application.StartupPath, "..", "..", "..", "DartGame.log"));
+        string logFile = Path.GetFullPath(Path.Combine(Application.StartupPath, "..", "..", "..", "DartGame.log"));
 
         public VBDartGame()
         {
             InitializeComponent();
 
-            // Form setup
-            this.Text = "Dart Game Simulator";
-            this.KeyPreview = true;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-
-            DrawPictureBox.BackColor = Color.White;
-            DrawPictureBox.TabStop = false;
-            RoundListBox.Visible = false;
-
-            // Access keys
-            StartRoundButton.Text = "&Start Round";
-            ReviewButton.Text = "&Review Rounds";
-            ExitButton.Text = "&Quit";
-
-            // Tab order
-            StartRoundButton.TabIndex = 0;
-            ReviewButton.TabIndex = 1;
-            ExitButton.TabIndex = 2;
-            RoundListBox.TabIndex = 3;
-
-            // Tooltips
-            tips.SetToolTip(StartRoundButton, "Start a new round of three darts");
-            tips.SetToolTip(ReviewButton, "Switch between Play mode and Review mode");
-            tips.SetToolTip(ExitButton, "Quit the game");
-            tips.SetToolTip(RoundListBox, "Select a past round to see its darts");
-            tips.SetToolTip(DrawPictureBox, "Press the Spacebar to throw a dart");
-
+            // Text for labels on startup
             RoundLabel.Text = "Round: -";
             ThrowLabel.Text = "Darts: 0 / 3";
             ModeLabel.Text = "Mode: Play";
 
-            // Connect these events if they are not connected in Designer
+            // Event handlers
             this.KeyDown += VBDartGame_KeyDown;
             DrawPictureBox.Paint += DrawPictureBox_Paint;
             RoundListBox.SelectedIndexChanged += RoundListBox_SelectedIndexChanged;
