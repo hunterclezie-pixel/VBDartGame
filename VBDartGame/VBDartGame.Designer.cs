@@ -67,6 +67,7 @@
             ReviewButton.TabIndex = 2;
             ReviewButton.Text = "Review Round";
             ReviewButton.UseVisualStyleBackColor = true;
+            ReviewButton.Click += ReviewButton_Click;
             // 
             // ExitButton
             // 

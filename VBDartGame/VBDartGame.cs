@@ -1,3 +1,5 @@
+using Microsoft.VisualBasic.ApplicationServices;
+
 namespace VBDartGame
 {
     public partial class VBDartGame : Form
@@ -16,7 +18,7 @@ namespace VBDartGame
 
         // Location of the log file
         string logFile = Path.GetFullPath(Path.Combine(
-            Application.StartupPath, "..", "..", "..", "DartGame.log"));
+            Application.StartupPath, "DartGame.log"));
 
         public VBDartGame()
         {
@@ -87,7 +89,7 @@ namespace VBDartGame
             RoundListBox.Items.Clear();
 
             try
-            { 
+            {
                 if (File.Exists(logFile))
                 {
                     File.WriteAllText(logFile, "");
@@ -133,6 +135,32 @@ namespace VBDartGame
             }
         }
 
+        void SaveRound()
+        {
+            if (throwCount == 3)
+            {
+                string roundData = $"{roundNumber}";
+            }
+            
+            for (int i = 0; i < 3; i++)
+            {
+                roundData += $",{dartPositions[i].X},{dartPositions[i].Y}";
+            }
+
+            try
+            {
+                File.AppendAllText(logFile, roundData + Environment.NewLine);
+
+                roundStarted = false;
+
+                MessageBox.Show($"Round {roundNumber} saved.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving round: " + ex.Message);
+            }
+        }
+
         private void VBDartGame_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
@@ -152,7 +180,6 @@ namespace VBDartGame
         {
             int x = GetNumberFrom(DrawPictureBox.Width);
             int y = GetNumberFrom(DrawPictureBox.Height);
-            DrawLine(x, y);
             DrawDart(x, y);
         }
 
@@ -178,6 +205,43 @@ namespace VBDartGame
                 ThrowLabel.Text = $"Darts: {throwCount} / 3";
                 ModeLabel.Text = "Mode: Play";
             }
+        }
+
+        private void ReviewButton_Click(object sender, EventArgs e)
+        {
+            if (roundStarted)
+            {
+                DialogResult result = MessageBox.Show(
+                    "Discard the current round?",
+                    "Confirm",
+                    MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
+            reviewMode = !reviewMode;
+            roundStarted = false;
+            throwCount = 0;
+
+            RoundListBox.Visible = reviewMode;
+
+            if (reviewMode)
+            {
+                ModeLabel.Text = "Mode: Review";
+                ReviewButton.Text = "&Back to Play";
+                LoadRounds();
+            }
+            else
+            {
+                ModeLabel.Text = "Mode: Play";
+                ReviewButton.Text = "&Review Rounds";
+            }
+
+            RoundLabel.Text = "Round: -";
+            ThrowLabel.Text = "Darts: 0 / 3";
         }
     }
 }
