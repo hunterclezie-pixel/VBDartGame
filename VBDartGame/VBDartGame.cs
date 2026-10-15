@@ -185,7 +185,6 @@ namespace VBDartGame
 
             try
             {
-                // Create the file if it doesn't exist yet
                 if (!File.Exists(logFile))
                 {
                     File.WriteAllText(logFile, "");
@@ -198,33 +197,28 @@ namespace VBDartGame
                 {
                     string[] parts = line.Split(',');
 
-                    // Skip corrupt lines
-                    if (parts.Length != 7)
+                    if (parts.Length == 7)
                     {
-                        continue;
-                    }
+                        int[] numbers = new int[7];
+                        bool valid = true;
 
-                    int[] numbers = new int[7];
-                    bool valid = true;
-
-                    for (int i = 0; i < 7; i++)
-                    {
-                        if (!int.TryParse(parts[i], out numbers[i]) || numbers[i] < 0)
+                        for (int i = 0; i < 7; i++)
                         {
-                            valid = false;
-                            break;
+                            if (!int.TryParse(parts[i], out numbers[i]) || numbers[i] < 0)
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+
+                        int roundNum = numbers[0];
+                        if (valid && roundNum != 0 && !roundNumbers.Contains(roundNum))
+                        {
+                            roundNumbers.Add(roundNum);
+                            savedRounds.Add(line);
+                            RoundListBox.Items.Add($"Round {roundNum}");
                         }
                     }
-
-                    // Skip bad lines and duplicate round numbers
-                    if (!valid || numbers[0] == 0 || roundNumbers.Contains(numbers[0]))
-                    {
-                        continue;
-                    }
-
-                    roundNumbers.Add(numbers[0]);
-                    savedRounds.Add(line);
-                    RoundListBox.Items.Add($"Round {numbers[0]}");
                 }
             }
             catch (Exception ex)
@@ -235,52 +229,38 @@ namespace VBDartGame
 
         void SaveRound()
         {
-            if (throwCount == 3 && roundStarted)
+            if (throwCount != 3 || !roundStarted)
             {
-                string roundData = $"{roundNumber}";
+                return;
+            }
 
-                for (int i = 0; i < 3; i++)
+            string roundData = $"{roundNumber}";
+
+            for (int i = 0; i < 3; i++)
+            {
+                roundData += $",{dartPositions[i].X},{dartPositions[i].Y}";
+            }
+
+            try
+            {
+                // Check that the round number has not been saved
+                if (roundNumber < GetNextRound())
                 {
-                    roundData += $",{dartPositions[i].X},{dartPositions[i].Y}";
-                }
-
-                try
-                {
-                    if (!File.Exists(logFile))
-                    {
-                        File.WriteAllText(logFile, "");
-                    }
-
-                    // Check for duplicate round numbers
-                    string[] lines = File.ReadAllLines(logFile);
-
-                    foreach (string line in lines)
-                    {
-                        string[] parts = line.Split(',');
-                        int savedNumber;
-
-                        if (int.TryParse(parts[0], out savedNumber))
-                        {
-                            if (savedNumber == roundNumber)
-                            {
-                                MessageBox.Show("This round is already saved.");
-                                roundStarted = false;
-                                return;
-                            }
-                        }
-                    }
-
-                    File.AppendAllText(logFile, roundData + Environment.NewLine);
-
+                    MessageBox.Show("This round is already saved.");
                     roundStarted = false;
+                    return;
+                }
 
-                    MessageBox.Show($"Round {roundNumber} saved. Start a new round to keep playing.");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error saving round: " + ex.Message +
-                        "\nPress Spacebar to try saving again.");
-                }
+                File.AppendAllText(logFile, roundData + Environment.NewLine);
+
+                roundStarted = false;
+
+                MessageBox.Show($"Round {roundNumber} saved. Start a new round to keep playing.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving round: " + ex.Message +
+                    "\nPress Spacebar to try saving again.");
             }
         }
 
