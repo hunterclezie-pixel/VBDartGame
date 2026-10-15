@@ -1,10 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+
 namespace VBDartGame
 {
     public partial class VBDartGame : Form
     {
 
         // Variables Below Here ------------------------------------------------------------
-        Random randy = new Random();
         Point[] dartPositions = new Point[3];
         List<string> savedRounds = new List<string>();
 
@@ -12,6 +17,9 @@ namespace VBDartGame
         int throwCount = 0;
         bool reviewMode = false;
         bool roundStarted = false;
+
+        // One Random for the whole program
+        Random randy = new Random();
 
         ToolTip tips = new ToolTip();
 
@@ -30,13 +38,10 @@ namespace VBDartGame
             this.MaximizeBox = false;
 
             DrawPictureBox.BackColor = Color.White;
+            DrawPictureBox.TabStop = false;
             RoundListBox.Visible = false;
 
-            RoundLabel.Text = "Round: -";
-            ThrowLabel.Text = "Darts: 0 / 3";
-            ModeLabel.Text = "Mode: Play";
-
-            // Button text and access keys
+            // Access keys
             StartRoundButton.Text = "&Start Round";
             ReviewButton.Text = "&Review Rounds";
             ExitButton.Text = "&Quit";
@@ -44,19 +49,24 @@ namespace VBDartGame
             // Tab order
             StartRoundButton.TabIndex = 0;
             ReviewButton.TabIndex = 1;
-            RoundListBox.TabIndex = 2;
-            ExitButton.TabIndex = 3;
-
-            DrawPictureBox.TabStop = false;
+            ExitButton.TabIndex = 2;
+            RoundListBox.TabIndex = 3;
 
             // Tooltips
-            tips.SetToolTip(StartRoundButton, "Start a new round.");
-            tips.SetToolTip(ReviewButton, "Review previous rounds.");
-            tips.SetToolTip(ExitButton, "Close the game.");
-            tips.SetToolTip(DrawPictureBox, "Press Spacebar to throw a dart.");
-            tips.SetToolTip(RoundListBox, "Select a saved round.");
+            tips.SetToolTip(StartRoundButton, "Start a new round of three darts");
+            tips.SetToolTip(ReviewButton, "Switch between Play mode and Review mode");
+            tips.SetToolTip(ExitButton, "Quit the game");
+            tips.SetToolTip(RoundListBox, "Select a past round to see its darts");
+            tips.SetToolTip(DrawPictureBox, "Press the Spacebar to throw a dart");
 
+            RoundLabel.Text = "Round: -";
+            ThrowLabel.Text = "Darts: 0 / 3";
+            ModeLabel.Text = "Mode: Play";
+
+            // Connect these events if they are not connected in Designer
             this.KeyDown += VBDartGame_KeyDown;
+            DrawPictureBox.Paint += DrawPictureBox_Paint;
+            RoundListBox.SelectedIndexChanged += RoundListBox_SelectedIndexChanged;
         }
 
         int GetNumberFrom(int max, int min = 0)
@@ -64,9 +74,10 @@ namespace VBDartGame
             return randy.Next(min, max + 1);
         }
 
+        // Draws one dart: a circle with a center mark
         void DrawDart(Graphics g, int x, int y)
         {
-            Pen thePen = new Pen(Color.Black, 2);
+            Pen thePen = new Pen(Color.Yellow, 2);
             int size = 10;
 
             g.DrawEllipse(thePen, x - size / 2, y - size / 2, size, size);
@@ -76,62 +87,104 @@ namespace VBDartGame
             thePen.Dispose();
         }
 
+        void ThrowDart()
+        {
+            if (!roundStarted || reviewMode)
+            {
+                return;
+            }
+
+            // Retry saving if three darts have already been thrown
+            if (throwCount == 3)
+            {
+                SaveRound();
+                return;
+            }
+
+            if (throwCount < 3)
+            {
+                // The margin keeps the whole dart inside the PictureBox
+                int margin = 10;
+
+                if (DrawPictureBox.ClientSize.Width <= margin * 2 ||
+                    DrawPictureBox.ClientSize.Height <= margin * 2)
+                {
+                    MessageBox.Show("PictureBox is too small.");
+                    return;
+                }
+
+                int x = GetNumberFrom(DrawPictureBox.ClientSize.Width - margin - 1, margin);
+                int y = GetNumberFrom(DrawPictureBox.ClientSize.Height - margin - 1, margin);
+
+                dartPositions[throwCount] = new Point(x, y);
+                throwCount++;
+
+                ThrowLabel.Text = $"Darts: {throwCount} / 3";
+
+                // Redraw right away so the dart shows before any message box
+                DrawPictureBox.Refresh();
+            }
+
+            if (throwCount == 3)
+            {
+                SaveRound();
+            }
+        }
+
+        // Draws a simple dartboard: rings with a bullseye in the middle
+        void DrawBoard(Graphics g)
+        {
+            int centerX = DrawPictureBox.ClientSize.Width / 2;
+            int centerY = DrawPictureBox.ClientSize.Height / 2;
+            int maxRadius = Math.Min(centerX, centerY) - 5;
+
+            if (maxRadius <= 0)
+            {
+                return;
+            }
+
+            Color[] ringColors =
+            {
+                Color.Black,
+                Color.Firebrick,
+                Color.White,
+                Color.ForestGreen,
+                Color.Firebrick
+            };
+
+            // Draw the biggest ring first, then smaller rings on top
+            for (int i = 0; i < ringColors.Length; i++)
+            {
+                int radius = maxRadius - (i * maxRadius / ringColors.Length);
+
+                Brush theBrush = new SolidBrush(ringColors[i]);
+
+                g.FillEllipse(theBrush,
+                    centerX - radius, centerY - radius,
+                    radius * 2, radius * 2);
+
+                theBrush.Dispose();
+            }
+        }
+
         private void DrawPictureBox_Paint(object sender, PaintEventArgs e)
         {
+            DrawBoard(e.Graphics);
+
             for (int i = 0; i < throwCount; i++)
             {
                 int x = dartPositions[i].X;
                 int y = dartPositions[i].Y;
 
+                // Keep the drawing inside the PictureBox
                 if (DrawPictureBox.ClientSize.Width > 20 &&
                     DrawPictureBox.ClientSize.Height > 20)
                 {
-                    x = Math.Max(10,
-                        Math.Min(x, DrawPictureBox.ClientSize.Width - 11));
-
-                    y = Math.Max(10,
-                        Math.Min(y, DrawPictureBox.ClientSize.Height - 11));
+                    x = Math.Max(10, Math.Min(x, DrawPictureBox.ClientSize.Width - 11));
+                    y = Math.Max(10, Math.Min(y, DrawPictureBox.ClientSize.Height - 11));
 
                     DrawDart(e.Graphics, x, y);
                 }
-            }
-        }
-
-        void ThrowDart()
-        {
-            if (!roundStarted || reviewMode)
-            {
-                MessageBox.Show("Please start a new round before throwing darts.");
-                return;
-            }
-
-            if (throwCount == 3)
-            {
-                MessageBox.Show("You have thrown 3 darts. Start a new round.");
-                SaveRound();
-            }
-
-            int margin = 10;
-
-            if (DrawPictureBox.ClientSize.Width <= margin * 2 ||
-                DrawPictureBox.ClientSize.Height <= margin * 2)
-            {
-                MessageBox.Show("PictureBox is too small.");
-                return;
-            }
-
-            int x = GetNumberFrom(DrawPictureBox.Width - margin - 1, margin);
-
-            int y = GetNumberFrom(DrawPictureBox.Height - margin - 1, margin);
-
-            dartPositions[throwCount] = new Point(x, y);
-            throwCount++;
-            ThrowLabel.Text = $"Darts: {throwCount} / 3";
-            DrawPictureBox.Invalidate();
-
-            if (throwCount == 3)
-            {
-                SaveRound();
             }
         }
 
@@ -142,6 +195,7 @@ namespace VBDartGame
 
             try
             {
+                // Create the file if it doesn't exist yet
                 if (!File.Exists(logFile))
                 {
                     File.WriteAllText(logFile, "");
@@ -154,6 +208,7 @@ namespace VBDartGame
                 {
                     string[] parts = line.Split(',');
 
+                    // Skip corrupt lines
                     if (parts.Length != 7)
                     {
                         continue;
@@ -171,6 +226,7 @@ namespace VBDartGame
                         }
                     }
 
+                    // Skip bad lines and duplicate round numbers
                     if (!valid || numbers[0] == 0 || roundNumbers.Contains(numbers[0]))
                     {
                         continue;
@@ -205,6 +261,7 @@ namespace VBDartGame
                         File.WriteAllText(logFile, "");
                     }
 
+                    // Check for duplicate round numbers
                     string[] lines = File.ReadAllLines(logFile);
 
                     foreach (string line in lines)
@@ -223,17 +280,16 @@ namespace VBDartGame
                         }
                     }
 
-                    File.AppendAllText(logFile,
-                        roundData + Environment.NewLine);
+                    File.AppendAllText(logFile, roundData + Environment.NewLine);
 
                     roundStarted = false;
 
-                    MessageBox.Show($"Round {roundNumber} saved.");
+                    MessageBox.Show($"Round {roundNumber} saved. Start a new round to keep playing.");
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error saving round: " + ex.Message +
-                        "\nPress Spacebar to try again.");
+                        "\nPress Spacebar to try saving again.");
                 }
             }
         }
@@ -241,6 +297,7 @@ namespace VBDartGame
         int GetNextRound()
         {
             int lastRound = 0;
+
             if (!File.Exists(logFile))
             {
                 File.WriteAllText(logFile, "");
@@ -269,30 +326,65 @@ namespace VBDartGame
             return lastRound + 1;
         }
 
+        // Puts everything into Play mode and clears the PictureBox
+        void SetPlayMode()
+        {
+            reviewMode = false;
+            roundStarted = false;
+            throwCount = 0;
+
+            RoundListBox.Visible = false;
+            ModeLabel.Text = "Mode: Play";
+            ReviewButton.Text = "&Review Rounds";
+            RoundLabel.Text = "Round: -";
+            ThrowLabel.Text = "Darts: 0 / 3";
+
+            DrawPictureBox.Invalidate();
+        }
+
+        // Puts everything into Review mode and clears the PictureBox
+        void SetReviewMode()
+        {
+            reviewMode = true;
+            roundStarted = false;
+            throwCount = 0;
+
+            RoundListBox.Visible = true;
+            ModeLabel.Text = "Mode: Review";
+            ReviewButton.Text = "&Back to Play";
+            RoundLabel.Text = "Round: -";
+            ThrowLabel.Text = "Darts: 0 / 3";
+
+            LoadRounds();
+            DrawPictureBox.Invalidate();
+        }
+
         private void VBDartGame_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
             {
+                // Stops Spacebar from also clicking a focused button
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
                 ThrowDart();
             }
         }
 
         // Event handlers here ------------------------------------------------------------
-
         private void ExitButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void DrawPictureBox_Click(object sender, EventArgs e)
-        {
-            int x = GetNumberFrom(DrawPictureBox.Width);
-            int y = GetNumberFrom(DrawPictureBox.Height);
-            DrawDart(DrawPictureBox.CreateGraphics(), x, y);
-        }
-
         private void StartRoundButton_Click(object sender, EventArgs e)
         {
+            // Leave Review mode first so the two modes never mix
+            if (reviewMode)
+            {
+                SetPlayMode();
+            }
+
             if (!roundStarted)
             {
                 try
@@ -301,17 +393,26 @@ namespace VBDartGame
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error occurred while starting the round.");
+                    MessageBox.Show("Error occurred while starting the round: " + ex.Message);
                     return;
                 }
 
                 throwCount = 0;
                 roundStarted = true;
-                reviewMode = false;
 
                 RoundLabel.Text = $"Round: {roundNumber}";
                 ThrowLabel.Text = $"Darts: {throwCount} / 3";
                 ModeLabel.Text = "Mode: Play";
+
+                // Clears the old darts
+                DrawPictureBox.Invalidate();
+
+                // Prevent focused buttons from receiving Spacebar
+                this.ActiveControl = null;
+            }
+            else
+            {
+                MessageBox.Show("Finish the current round first.");
             }
         }
 
@@ -330,55 +431,49 @@ namespace VBDartGame
                 }
             }
 
-            reviewMode = !reviewMode;
-            roundStarted = false;
-            throwCount = 0;
-
-            RoundListBox.Visible = reviewMode;
-
             if (reviewMode)
             {
-                ModeLabel.Text = "Mode: Review";
-                ReviewButton.Text = "&Back to Play";
-                LoadRounds();
+                SetPlayMode();
             }
             else
             {
-                ModeLabel.Text = "Mode: Play";
-                ReviewButton.Text = "&Review Rounds";
+                SetReviewMode();
             }
-
-            RoundLabel.Text = "Round: -";
-            ThrowLabel.Text = "Darts: 0 / 3";
-            DrawPictureBox.Invalidate();
         }
 
         private void RoundListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!reviewMode || RoundListBox.SelectedIndex < 0)
+            if (!reviewMode || RoundListBox.SelectedIndex == -1)
             {
                 return;
             }
 
-            string roundData = savedRounds[RoundListBox.SelectedIndex];
-            string[] parts = roundData.Split(',');
-
-            roundNumber = int.Parse(parts[0]);
-
-            for (int i = 0; i < 3; i++)
+            try
             {
-                int x = int.Parse(parts[i * 2 + 1]);
-                int y = int.Parse(parts[i * 2 + 2]);
+                string roundData = savedRounds[RoundListBox.SelectedIndex];
+                string[] parts = roundData.Split(',');
 
-                dartPositions[i] = new Point(x, y);
+                roundNumber = int.Parse(parts[0]);
+
+                for (int i = 0; i < 3; i++)
+                {
+                    int x = int.Parse(parts[i * 2 + 1]);
+                    int y = int.Parse(parts[i * 2 + 2]);
+
+                    dartPositions[i] = new Point(x, y);
+                }
+
+                throwCount = 3;
+
+                RoundLabel.Text = $"Round: {roundNumber}";
+                ThrowLabel.Text = "Darts: 3 / 3";
+
+                DrawPictureBox.Invalidate();
             }
-
-            throwCount = 3;
-
-            RoundLabel.Text = $"Round: {roundNumber}";
-            ThrowLabel.Text = "Darts: 3 / 3";
-
-            DrawPictureBox.Invalidate();
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not show that round: " + ex.Message);
+            }
         }
     }
 }
