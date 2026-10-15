@@ -94,36 +94,28 @@ namespace VBDartGame
                 return;
             }
 
-            // Retry saving if three darts have already been thrown
+            // Save again if the previous save failed
             if (throwCount == 3)
             {
                 SaveRound();
                 return;
             }
 
-            if (throwCount < 3)
+            int margin = 10;
+
+            if (DrawPictureBox.ClientSize.Width <= margin * 2 ||
+                DrawPictureBox.ClientSize.Height <= margin * 2)
             {
-                // The margin keeps the whole dart inside the PictureBox
-                int margin = 10;
-
-                if (DrawPictureBox.ClientSize.Width <= margin * 2 ||
-                    DrawPictureBox.ClientSize.Height <= margin * 2)
-                {
-                    MessageBox.Show("PictureBox is too small.");
-                    return;
-                }
-
-                int x = GetNumberFrom(DrawPictureBox.ClientSize.Width - margin - 1, margin);
-                int y = GetNumberFrom(DrawPictureBox.ClientSize.Height - margin - 1, margin);
-
-                dartPositions[throwCount] = new Point(x, y);
-                throwCount++;
-
-                ThrowLabel.Text = $"Darts: {throwCount} / 3";
-
-                // Redraw right away so the dart shows before any message box
-                DrawPictureBox.Refresh();
+                MessageBox.Show("PictureBox is too small.");
+                return;
             }
+
+            int x = GetNumberFrom(DrawPictureBox.ClientSize.Width - margin - 1, margin);
+            int y = GetNumberFrom(DrawPictureBox.ClientSize.Height - margin - 1, margin);
+            dartPositions[throwCount] = new Point(x, y);
+            throwCount++;
+            ThrowLabel.Text = $"Darts: {throwCount} / 3";
+            DrawPictureBox.Refresh();
 
             if (throwCount == 3)
             {
