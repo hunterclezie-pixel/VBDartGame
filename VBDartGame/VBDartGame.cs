@@ -64,17 +64,37 @@ namespace VBDartGame
             return randy.Next(min, max + 1);
         }
 
-        void DrawDart(int x, int y)
+        void DrawDart(Graphics g, int x, int y)
         {
-            Graphics g = DrawPictureBox.CreateGraphics();
             Pen thePen = new Pen(Color.Black, 2);
             int size = 10;
+
             g.DrawEllipse(thePen, x - size / 2, y - size / 2, size, size);
             g.DrawLine(thePen, x - 10, y, x + 10, y);
             g.DrawLine(thePen, x, y - 10, x, y + 10);
 
-            g.Dispose();
             thePen.Dispose();
+        }
+
+        private void DrawPictureBox_Paint(object sender, PaintEventArgs e)
+        {
+            for (int i = 0; i < throwCount; i++)
+            {
+                int x = dartPositions[i].X;
+                int y = dartPositions[i].Y;
+
+                if (DrawPictureBox.ClientSize.Width > 20 &&
+                    DrawPictureBox.ClientSize.Height > 20)
+                {
+                    x = Math.Max(10,
+                        Math.Min(x, DrawPictureBox.ClientSize.Width - 11));
+
+                    y = Math.Max(10,
+                        Math.Min(y, DrawPictureBox.ClientSize.Height - 11));
+
+                    DrawDart(e.Graphics, x, y);
+                }
+            }
         }
 
         void ThrowDart()
@@ -243,7 +263,7 @@ namespace VBDartGame
         {
             int x = GetNumberFrom(DrawPictureBox.Width);
             int y = GetNumberFrom(DrawPictureBox.Height);
-            DrawDart(x, y);
+            DrawDart(DrawPictureBox.CreateGraphics(), x, y);
         }
 
         private void StartRoundButton_Click(object sender, EventArgs e)
