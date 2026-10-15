@@ -67,18 +67,35 @@ namespace VBDartGame
 
         void ThrowDart()
         {
+            if (!roundStarted || reviewMode)
+            {
+                MessageBox.Show("Please start a new round before throwing darts.");
+                return;
+            }
+
+
             if (throwCount < 3)
             {
-                int x = GetNumberFrom(DrawPictureBox.Width);
-                int y = GetNumberFrom(DrawPictureBox.Height);
+                int margin = 10;
+                int x = GetNumberFrom(DrawPictureBox.Width - margin - 1, margin);
+                int y = GetNumberFrom(DrawPictureBox.Height - margin - 1, margin);
                 dartPositions[throwCount] = new Point(x, y);
                 DrawDart(x, y);
                 throwCount++;
                 ThrowLabel.Text = $"Darts: {throwCount} / 3";
             }
-            else
+            if (throwCount == 3)
             {
-                MessageBox.Show("You have already thrown 3 darts. Start a new round.");
+                MessageBox.Show("You have thrown 3 darts. Start a new round.");
+                SaveRound();
+            }
+        }
+
+        private void VBDartGame_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Space)
+            {
+                ThrowDart();
             }
         }
 
@@ -93,7 +110,6 @@ namespace VBDartGame
         {
             int x = GetNumberFrom(DrawPictureBox.Width);
             int y = GetNumberFrom(DrawPictureBox.Height);
-            Spirals();
             DrawLine(x, y);
             DrawDart(x, y);
         }
