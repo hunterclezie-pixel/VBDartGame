@@ -18,7 +18,7 @@ namespace VBDartGame
 
         // Location of the log file
         string logFile = Path.GetFullPath(Path.Combine(
-            Application.StartupPath, "DartGame.log"));
+            Application.StartupPath, "..", "..", "..", "DartGame.log"));
 
         public VBDartGame()
         {
@@ -159,6 +159,37 @@ namespace VBDartGame
             {
                 MessageBox.Show("Error saving round: " + ex.Message);
             }
+        }
+
+        int GetNextRound()
+        {
+            int lastRound = 0;
+            if (!File.Exists(logFile))
+            {
+                File.WriteAllText(logFile, "");
+            }
+
+            string[] lines = File.ReadAllLines(logFile);
+
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split(',');
+
+                if (parts.Length == 7)
+                {
+                    int savedNumber;
+
+                    if (int.TryParse(parts[0], out savedNumber))
+                    {
+                        if (savedNumber > lastRound)
+                        {
+                            lastRound = savedNumber;
+                        }
+                    }
+                }
+            }
+
+            return lastRound + 1;
         }
 
         private void VBDartGame_KeyDown(object sender, KeyEventArgs e)
