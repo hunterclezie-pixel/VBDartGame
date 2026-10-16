@@ -115,7 +115,7 @@
             // ModeLabel
             // 
             ModeLabel.AutoSize = true;
-            ModeLabel.Location = new Point(6, 93);
+            ModeLabel.Location = new Point(6, 94);
             ModeLabel.Name = "ModeLabel";
             ModeLabel.Size = new Size(88, 20);
             ModeLabel.TabIndex = 7;
