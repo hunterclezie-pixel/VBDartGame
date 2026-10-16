@@ -21,8 +21,6 @@ namespace VBDartGame
         // One Random for the whole program
         Random randy = new Random();
 
-        ToolTip tips = new ToolTip();
-
         // Location of the log file
         string logFile = Path.GetFullPath(Path.Combine(Application.StartupPath, "..", "..", "..", "DartGame.log"));
 
@@ -41,6 +39,7 @@ namespace VBDartGame
             RoundListBox.SelectedIndexChanged += RoundListBox_SelectedIndexChanged;
         }
 
+        // Returns a random number between min and max, inclusive
         int GetNumberFrom(int max, int min = 0)
         {
             return randy.Next(min, max + 1);
@@ -59,6 +58,7 @@ namespace VBDartGame
             thePen.Dispose();
         }
 
+        // Throws a dart at a random position on the PictureBox
         void ThrowDart()
         {
             if (!roundStarted || reviewMode)
@@ -131,6 +131,7 @@ namespace VBDartGame
             }
         }
 
+        // Paint event handler for the PictureBox
         private void DrawPictureBox_Paint(object sender, PaintEventArgs e)
         {
             DrawBoard(e.Graphics);
@@ -150,6 +151,7 @@ namespace VBDartGame
             }
         }
 
+        // Loads all saved rounds from the log file into the ListBox
         void LoadRounds()
         {
             savedRounds.Clear();
@@ -199,6 +201,7 @@ namespace VBDartGame
             }
         }
 
+        // Saves the current round to the log file
         void SaveRound()
         {
             if (throwCount != 3 || !roundStarted)
@@ -236,6 +239,7 @@ namespace VBDartGame
             }
         }
 
+        // Returns the next round number based on the log file
         int GetNextRound()
         {
             int lastRound = 0;
@@ -301,6 +305,7 @@ namespace VBDartGame
             DrawPictureBox.Invalidate();
         }
 
+        // Handles the Spacebar key to throw a dart
         private void VBDartGame_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
@@ -308,7 +313,6 @@ namespace VBDartGame
                 // Stops Spacebar from also clicking a focused button
                 e.Handled = true;
                 e.SuppressKeyPress = true;
-
                 ThrowDart();
             }
         }
